@@ -2,6 +2,7 @@
 
 import {
   BarChart3,
+  Calculator,
   CheckSquare,
   ClipboardList,
   GitBranch,
@@ -17,7 +18,7 @@ const navItems: {
   label: string;
   labelAr: string;
   icon: typeof ClipboardList;
-  badge?: "pending";
+  badge?: "pending" | "readyForPayment";
 }[] = [
   {
     id: "request",
@@ -31,6 +32,13 @@ const navItems: {
     labelAr: "الموافقات",
     icon: CheckSquare,
     badge: "pending",
+  },
+  {
+    id: "accounting",
+    label: "Accounting",
+    labelAr: "الحسابات",
+    icon: Calculator,
+    badge: "readyForPayment",
   },
   {
     id: "analytics",
@@ -60,7 +68,11 @@ export function Sidebar() {
           const Icon = item.icon;
           const isActive = activeView === item.id;
           const badgeCount =
-            item.badge === "pending" ? stats.pending : undefined;
+            item.badge === "pending"
+              ? stats.pending
+              : item.badge === "readyForPayment"
+                ? stats.readyForPayment
+                : undefined;
 
           return (
             <button

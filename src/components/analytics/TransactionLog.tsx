@@ -262,6 +262,7 @@ export function TransactionLog() {
         <div className="flex flex-wrap gap-3 text-[11px] sm:gap-4 sm:text-xs">
           <span className="text-amber-600">{stats.pending} pending</span>
           <span className="text-emerald-600">{stats.approved} approved</span>
+          <span className="text-teal-600">{stats.paid} paid</span>
           <span className="text-rose-600">{stats.rejected} rejected</span>
         </div>
       </div>

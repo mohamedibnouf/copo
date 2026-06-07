@@ -8,6 +8,7 @@ import { Header } from "@/components/layout/Header";
 import { PurchaseRequestForm } from "@/components/request/PurchaseRequestForm";
 import { RequesterDashboard } from "@/components/request/RequesterDashboard";
 import { ApproverActionCenter } from "@/components/approval/ApproverActionCenter";
+import { AccountantCenter } from "@/components/accounting/AccountantCenter";
 import { StatusKanban } from "@/components/analytics/StatusKanban";
 import { TransactionLog } from "@/components/analytics/TransactionLog";
 
@@ -24,6 +25,8 @@ function RoleBasedContent() {
       );
     case "approval":
       return <ApproverActionCenter />;
+    case "accounting":
+      return <AccountantCenter />;
     case "analytics":
       return (
         <div className="space-y-4 sm:space-y-6">

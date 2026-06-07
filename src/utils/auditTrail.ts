@@ -1,5 +1,9 @@
 import type { AuditLogEntry, PurchaseRequest } from "@/types/workflow";
 import { COPO_BRAND } from "@/constants/branding";
+import {
+  MATCHED_THREE_WAY,
+  UNMATCHED_THREE_WAY,
+} from "@/utils/journalEntry";
 
 let auditCounter = 0;
 
@@ -122,7 +126,23 @@ export function buildAwaitingFinanceEntry(timestamp: string): AuditLogEntry {
     actorRoleAr: "النظام",
     actorName: COPO_BRAND.workflowEngine,
     messageEn: "Awaiting Finance Manager approval — COPO Double Approval policy",
-    messageAr: "في انتظار موافقة المدير المالي — سياسة الموافقة المزدوجة لكوبو",
+    messageAr: "في انتظار موافقة المدير المالي — سياسة الموافقة المزدوجة لكوبo",
+  });
+}
+
+export function buildPaymentIssuedEntry(
+  timestamp: string,
+  journalEntryId: string,
+  actorName = "Salman Al-Aud"
+): AuditLogEntry {
+  return createAuditEntry({
+    timestamp,
+    action: "payment_issued",
+    actorRole: "Accountant",
+    actorRoleAr: "المحاسب",
+    actorName,
+    messageEn: `Payment processed and voucher created by Accountant (${actorName}) — Journal Entry: ${journalEntryId}`,
+    messageAr: `تمت معالجة الدفع وإنشاء سند الصرف بواسطة المحاسب (${actorName}) — رقم القيد المحاسبي: ${journalEntryId}`,
   });
 }
 
@@ -155,12 +175,24 @@ export function resetAuditCounter(start = 0): void {
 }
 
 export function ensureAuditTrail(request: PurchaseRequest): PurchaseRequest {
-  if (Array.isArray(request.auditTrail) && request.auditTrail.length > 0) {
-    return request;
+  let updated = { ...request };
+
+  if (!Array.isArray(updated.auditTrail) || updated.auditTrail.length === 0) {
+    updated = {
+      ...updated,
+      auditTrail: buildCreatedTrail(updated.requester, updated.createdAt),
+    };
   }
 
-  return {
-    ...request,
-    auditTrail: buildCreatedTrail(request.requester, request.createdAt),
-  };
+  if (!updated.threeWayMatch) {
+    updated = {
+      ...updated,
+      threeWayMatch:
+        updated.status === "Approved" || updated.status === "Paid"
+          ? { ...MATCHED_THREE_WAY }
+          : { ...UNMATCHED_THREE_WAY },
+    };
+  }
+
+  return updated;
 }

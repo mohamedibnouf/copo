@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Clock, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, Receipt, XCircle } from "lucide-react";
 import { TransactionIdBadge } from "@/components/ui/TransactionIdBadge";
 import { useWorkflow } from "@/context/WorkflowContext";
 
@@ -33,6 +33,18 @@ export function StatusKanban() {
       iconBg: "bg-emerald-100",
     },
     {
+      key: "Paid" as const,
+      label: "Paid",
+      labelAr: "تم الصرف",
+      count: stats.paid,
+      icon: Receipt,
+      color: "teal",
+      bg: "bg-teal-50",
+      border: "ring-teal-200",
+      text: "text-teal-700",
+      iconBg: "bg-teal-100",
+    },
+    {
       key: "Rejected" as const,
       label: "Rejected",
       labelAr: "مرفوض",
@@ -48,7 +60,7 @@ export function StatusKanban() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {columns.map((col) => {
           const Icon = col.icon;
           const pct = stats.total > 0 ? Math.round((col.count / stats.total) * 100) : 0;
@@ -73,7 +85,9 @@ export function StatusKanban() {
                       ? "bg-amber-400"
                       : col.color === "emerald"
                         ? "bg-emerald-400"
-                        : "bg-rose-400"
+                        : col.color === "teal"
+                          ? "bg-teal-400"
+                          : "bg-rose-400"
                   }`}
                   style={{ width: `${pct}%` }}
                 />
@@ -88,7 +102,7 @@ export function StatusKanban() {
         <h4 className="mb-3 text-sm font-semibold text-slate-900 sm:mb-4">
           Kanban Board — COPO Branches / لوحة كانبان — فروع كوبو
         </h4>
-        <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-4">
           {columns.map((col) => {
             const items = requests.filter((r) => r.status === col.key);
 

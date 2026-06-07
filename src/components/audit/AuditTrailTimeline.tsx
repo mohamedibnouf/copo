@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   Clock,
   FileText,
+  Receipt,
   Send,
   Shield,
   Wallet,
@@ -61,6 +62,11 @@ const actionStyles: Record<
     icon: Clock,
     dot: "bg-amber-500 ring-amber-100",
     line: "bg-amber-200",
+  },
+  payment_issued: {
+    icon: Receipt,
+    dot: "bg-teal-500 ring-teal-100",
+    line: "bg-teal-200",
   },
 };
 

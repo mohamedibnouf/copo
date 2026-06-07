@@ -15,6 +15,10 @@ const viewTitles: Record<string, { title: string; subtitle: string }> = {
     title: "Workflow & Approvals / سير العمل والموافقات",
     subtitle: "Review and approve COPO branch purchase requests",
   },
+  accounting: {
+    title: "Accounting & Invoice Center / مركز الحسابات والفواتير",
+    subtitle: "3-way matching, payment issuance & journal entries for COPO branches",
+  },
   analytics: {
     title: "Dashboard & Logs / لوحة التحكم والسجلات",
     subtitle: "Track transactions across all COPO Restaurants Group branches",

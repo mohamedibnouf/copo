@@ -9,7 +9,7 @@ export type Branch = (typeof BRANCHES)[number];
 
 export type UrgencyLevel = "Low" | "Medium" | "High";
 
-export type RequestStatus = "Pending" | "Approved" | "Rejected";
+export type RequestStatus = "Pending" | "Approved" | "Rejected" | "Paid";
 
 export type WorkflowStep = "Created" | "Under Review" | "Final Approval";
 
@@ -22,7 +22,8 @@ export type AuditActionType =
   | "finance_rejected"
   | "final_approved"
   | "final_rejected"
-  | "status_updated";
+  | "status_updated"
+  | "payment_issued";
 
 export interface AuditLogEntry {
   id: string;
@@ -33,6 +34,12 @@ export interface AuditLogEntry {
   actorName: string;
   messageEn: string;
   messageAr: string;
+}
+
+export interface ThreeWayMatch {
+  purchaseRequest: boolean;
+  receivedGoods: boolean;
+  supplierInvoice: boolean;
 }
 
 export interface PurchaseRequest {
@@ -51,9 +58,17 @@ export interface PurchaseRequest {
   createdAt: string;
   updatedAt: string;
   auditTrail: AuditLogEntry[];
+  threeWayMatch?: ThreeWayMatch;
+  journalEntryId?: string;
+  paidAt?: string;
   notes?: string;
 }
 
-export type UserRole = "requester" | "area_manager" | "finance" | "viewer";
+export type UserRole =
+  | "requester"
+  | "area_manager"
+  | "finance"
+  | "accountant"
+  | "viewer";
 
-export type ActiveView = "request" | "approval" | "analytics";
+export type ActiveView = "request" | "approval" | "accounting" | "analytics";

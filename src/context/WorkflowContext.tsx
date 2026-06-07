@@ -24,9 +24,15 @@ import {
   buildFinalApprovedEntry,
   buildFinanceApprovedEntry,
   buildFinanceRejectedEntry,
+  buildPaymentIssuedEntry,
   ensureAuditTrail,
 } from "@/utils/auditTrail";
 import { generateSequentialId } from "@/utils/transactionId";
+import {
+  generateJournalEntryId,
+  MATCHED_THREE_WAY,
+  UNMATCHED_THREE_WAY,
+} from "@/utils/journalEntry";
 import { getDefaultViewForRole } from "@/constants/roles";
 
 interface NewRequestInput {
@@ -50,19 +56,25 @@ interface WorkflowContextValue {
   submitRequest: (input: NewRequestInput) => PurchaseRequest;
   approveRequest: (id: string, approverRole: "area_manager" | "finance") => void;
   rejectRequest: (id: string, reason?: string) => void;
+  issuePayment: (id: string) => void;
   stats: {
     pending: number;
     approved: number;
+    readyForPayment: number;
+    paid: number;
     rejected: number;
     total: number;
   };
   filteredRequests: PurchaseRequest[];
   pendingForRole: PurchaseRequest[];
+  approvedForPayment: PurchaseRequest[];
+  paidRequests: PurchaseRequest[];
 }
 
 const DEMO_ACTORS = {
   area_manager: "Fahad Al-Malki",
   finance: "Nadia Al-Faraj",
+  accountant: "Salman Al-Aud",
 };
 
 const WorkflowContext = createContext<WorkflowContextValue | null>(null);
@@ -104,6 +116,7 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
         createdAt: now,
         updatedAt: now,
         auditTrail: buildCreatedTrail(input.requester, now),
+        threeWayMatch: { ...UNMATCHED_THREE_WAY },
       };
       return [newRequest, ...prev];
     });
@@ -135,6 +148,7 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
                 workflowStep: "Final Approval" as const,
                 updatedAt: now,
                 auditTrail: newTrail,
+                threeWayMatch: { ...MATCHED_THREE_WAY },
                 notes: undefined,
               };
             }
@@ -148,6 +162,7 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
                 workflowStep: "Final Approval" as const,
                 updatedAt: now,
                 auditTrail: newTrail,
+                threeWayMatch: { ...MATCHED_THREE_WAY },
                 notes: undefined,
               };
             }
@@ -178,6 +193,7 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
                 workflowStep: "Final Approval" as const,
                 updatedAt: now,
                 auditTrail: newTrail,
+                threeWayMatch: { ...MATCHED_THREE_WAY },
                 notes: undefined,
               };
             }
@@ -230,6 +246,34 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const issuePayment = useCallback((id: string) => {
+    setRequests((prev) => {
+      const journalId = generateJournalEntryId(prev);
+      const now = new Date().toISOString();
+
+      return prev.map((req) => {
+        if (req.id !== id || req.status !== "Approved") return req;
+
+        const base = ensureAuditTrail(req);
+        const newTrail = [
+          ...base.auditTrail,
+          buildPaymentIssuedEntry(now, journalId, DEMO_ACTORS.accountant),
+        ];
+
+        return {
+          ...base,
+          status: "Paid" as const,
+          journalEntryId: journalId,
+          paidAt: now,
+          updatedAt: now,
+          auditTrail: newTrail,
+          threeWayMatch: { ...MATCHED_THREE_WAY },
+          notes: undefined,
+        };
+      });
+    });
+  }, []);
+
   const normalizedRequests = useMemo(
     () => requests.map(ensureAuditTrail),
     [requests]
@@ -239,9 +283,22 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
     () => ({
       pending: normalizedRequests.filter((r) => r.status === "Pending").length,
       approved: normalizedRequests.filter((r) => r.status === "Approved").length,
+      readyForPayment: normalizedRequests.filter((r) => r.status === "Approved")
+        .length,
+      paid: normalizedRequests.filter((r) => r.status === "Paid").length,
       rejected: normalizedRequests.filter((r) => r.status === "Rejected").length,
       total: normalizedRequests.length,
     }),
+    [normalizedRequests]
+  );
+
+  const approvedForPayment = useMemo(
+    () => normalizedRequests.filter((r) => r.status === "Approved"),
+    [normalizedRequests]
+  );
+
+  const paidRequests = useMemo(
+    () => normalizedRequests.filter((r) => r.status === "Paid"),
     [normalizedRequests]
   );
 
@@ -282,9 +339,12 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
       submitRequest,
       approveRequest,
       rejectRequest,
+      issuePayment,
       stats,
       filteredRequests,
       pendingForRole,
+      approvedForPayment,
+      paidRequests,
     }),
     [
       normalizedRequests,
@@ -295,9 +355,12 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
       submitRequest,
       approveRequest,
       rejectRequest,
+      issuePayment,
       stats,
       filteredRequests,
       pendingForRole,
+      approvedForPayment,
+      paidRequests,
     ]
   );
 

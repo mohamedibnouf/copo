@@ -4,18 +4,21 @@ const statusStyles: Record<RequestStatus, string> = {
   Pending: "bg-amber-50 text-amber-700 ring-amber-200",
   Approved: "bg-emerald-50 text-emerald-700 ring-emerald-200",
   Rejected: "bg-rose-50 text-rose-700 ring-rose-200",
+  Paid: "bg-teal-50 text-teal-700 ring-teal-200",
 };
 
 const statusLabels: Record<RequestStatus, string> = {
   Pending: "Pending / قيد الانتظار",
   Approved: "Approved / موافق عليه",
   Rejected: "Rejected / مرفوض",
+  Paid: "Paid / تم الصرف",
 };
 
 const statusShort: Record<RequestStatus, string> = {
   Pending: "Pending",
   Approved: "Approved",
   Rejected: "Rejected",
+  Paid: "Paid",
 };
 
 const urgencyStyles: Record<UrgencyLevel, string> = {
