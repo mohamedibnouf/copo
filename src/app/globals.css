@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f1f5f9;
+  --background: #eef0f3;
   --foreground: #0f172a;
+  --mobile-nav-height: 4rem;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 @theme inline {
@@ -15,6 +17,7 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -22,6 +25,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  min-height: 100dvh;
 }
 
 * {
@@ -39,35 +43,13 @@ body {
   border-radius: 9999px;
 }
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Mobile bottom nav clearance */
+.pb-mobile-nav {
+  padding-bottom: calc(var(--mobile-nav-height) + var(--safe-bottom));
 }
 
-.animate-in {
-  animation: fade-in 0.3s ease-out;
-}
-
-.fade-in {
-  animation-name: fade-in;
-}
-
-@keyframes demo-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.35);
+@media (min-width: 1024px) {
+  .pb-mobile-nav {
+    padding-bottom: 0;
   }
-  50% {
-    box-shadow: 0 0 0 6px rgba(251, 191, 36, 0);
-  }
-}
-
-.demo-badge-pulse {
-  animation: demo-pulse 2.5s ease-in-out infinite;
 }

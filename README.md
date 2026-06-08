@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# COPO KSA — Internal Transactions Demo
 
-## Getting Started
+Demo web application for **COPO KSA / شركة كوبو لتقديم الوجبات** — internal payment vouchers, approvals, attachments, comments, and workflow timeline.
 
-First, run the development server:
+## Stack
+
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- shadcn/ui-style components (Radix UI)
+- lucide-react
+- Mock data only (no backend)
+
+## Run
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Pages
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Route | Description |
+|-------|-------------|
+| `/` | Dashboard — stats, recent transactions, overview table |
+| `/requests` | All requests list |
+| `/requests/new` | Create new payment voucher request |
+| `/requests/[id]` | Request detail + workflow/comments/files panel |
 
-## Learn More
+## Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+  app/           # Next.js pages
+  components/    # UI, layout, requests, workflow, panel
+  context/       # App state (mock CRUD)
+  data/          # mock-data.ts
+  lib/           # utils
+  types/         # TypeScript types
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Demo Data
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Includes sample request **FR266010** (filter maintenance — BLT Cafe) matching the reference workflow screenshots.
 
-## Deploy on Vercel
+## Future
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Code is structured for later integration with Supabase or PostgreSQL.

@@ -1,5 +1,6 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AppShell } from "@/components/layout/AppShell";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,16 +14,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "COPO | Flow — Internal Workflows Demo",
+  title: "COPO KSA | Internal Transactions Demo",
   description:
-    "COPO Restaurants Group purchase request workflow — Riyadh, Jeddah, Dammam & Khobar branches",
+    "Demo internal transactions system for COPO KSA — payment vouchers, approvals, and workflow.",
 };
 
-export const viewport: Viewport = {
+export const viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5,
-  viewportFit: "cover",
+  viewportFit: "cover" as const,
 };
 
 export default function RootLayout({
@@ -31,11 +31,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full min-h-[100dvh] overflow-x-hidden">{children}</body>
+    <html lang="en" dir="ltr">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <AppShell>{children}</AppShell>
+      </body>
     </html>
   );
 }
